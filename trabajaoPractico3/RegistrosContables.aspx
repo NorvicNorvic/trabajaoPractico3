@@ -16,9 +16,9 @@
             <br />
             <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CUENTA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MONTO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TIPO<br />
-            <asp:DropDownList ID="DropDownList1" runat="server" DataSourceID="SqlDataSource1" DataTextField="descripcion" DataValueField="id" Width="199px" Height="29px">
+            <asp:DropDownList ID="ddCuenta" runat="server" DataSourceID="SqlDataSource1" DataTextField="descripcion" DataValueField="id" Width="199px" Height="29px">
             </asp:DropDownList>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<asp:TextBox ID="TextBox2" runat="server" TextMode="Number" placeholder ="Monto" ToolTip="Cargar el Monto" Width="158px"></asp:TextBox>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<asp:TextBox ID="txtMonto" runat="server" TextMode="Number" placeholder ="Monto" ToolTip="Cargar el Monto" Width="158px"></asp:TextBox>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <asp:DropDownList ID="ddTipoCuenta" runat="server">
                 <asp:ListItem Value="false">Debe</asp:ListItem>
                 <asp:ListItem Value="true">Haber</asp:ListItem>
@@ -35,7 +35,7 @@
             <asp:Label ID="Label2" runat="server" Text=""></asp:Label>
             <br />
             <br />
-            <asp:DropDownList ID="DropDownList2" runat="server" CssClass="js-example-basic-single" DataSourceID="SqlDataSource2" DataTextField="id" DataValueField="id" Width="542px" OnSelectedIndexChanged="DropDownList2_SelectedIndexChanged" AutoPostBack="True">
+            <asp:DropDownList ID="ddRegistroContable" runat="server" CssClass="js-example-basic-single" DataSourceID="SqlDataSource2" DataTextField="id" DataValueField="id" Width="542px" OnSelectedIndexChanged="DropDownList2_SelectedIndexChanged" AutoPostBack="True">
             </asp:DropDownList>
 &nbsp;<asp:Button ID="Button2" runat="server" OnClientClick="return Confirmar();" OnClick="Button2_Click" Text="Borrar" />
 &nbsp;<br />                                                                                                                              
@@ -55,10 +55,10 @@
                     <asp:Parameter Name="tipo" Type="Boolean" />
                 </InsertParameters>
                 <UpdateParameters>
-                    <asp:Parameter Name="idCuenta" Type="Int32" />
-                    <asp:Parameter Name="monto" Type="Int32" />
-                    <asp:Parameter Name="tipo" Type="Boolean" />
-                    <asp:Parameter Name="id" Type="Int32" />
+                    <asp:ControlParameter ControlID="ddCuenta" Name="idCuenta" PropertyName="SelectedValue" Type="Int32" />
+                    <asp:ControlParameter ControlID="txtMonto" Name="monto" PropertyName="Text" Type="Int32" />
+                    <asp:ControlParameter ControlID="ddTipoCuenta" Name="tipo" PropertyName="SelectedValue" Type="Boolean" />
+                    <asp:ControlParameter ControlID="ddRegistroContable" Name="id" PropertyName="SelectedValue" Type="Int32" />
                 </UpdateParameters>
             </asp:SqlDataSource>
             <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:cadena1 %>" SelectCommand="SELECT RegistroContables.id,  RegistroContables.monto, RegistroContables.tipo, Cuentas.descripcion FROM Cuentas INNER JOIN RegistroContables ON Cuentas.id = RegistroContables.idCuenta"></asp:SqlDataSource>

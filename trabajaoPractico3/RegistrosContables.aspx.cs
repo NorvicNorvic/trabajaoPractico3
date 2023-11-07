@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -37,6 +38,9 @@ namespace trabajaoPractico3
                     headerCell0.Text = "ID";
                     headerRow.Cells.Add(headerCell0);
 
+                    TableCell headerCell5 = new TableCell();
+                    headerCell5.Text = "idCuenta";
+                    headerRow.Cells.Add(headerCell5);
 
                     TableCell headerCell1 = new TableCell();
                     headerCell1.Text = "Cuenta";
@@ -87,15 +91,15 @@ namespace trabajaoPractico3
 
         protected void Button1_Click(object sender, EventArgs e)
         {
-            SqlDataSource2.InsertParameters["idCuenta"].DefaultValue = DropDownList1.SelectedValue;
-            SqlDataSource2.InsertParameters["monto"].DefaultValue = TextBox2.Text;
+            SqlDataSource2.InsertParameters["idCuenta"].DefaultValue = ddCuenta.SelectedValue;
+            SqlDataSource2.InsertParameters["monto"].DefaultValue = txtMonto.Text;
             SqlDataSource2.InsertParameters["tipo"].DefaultValue = ddTipoCuenta.SelectedValue;
             int result = SqlDataSource2.Insert();
             if (result > 0)
             {
                 Label2.Text = "Agregado " + result.ToString() + " registro.";
                 completarTabla();
-                TextBox2.Text = string.Empty;
+                txtMonto.Text = string.Empty;
             }
             else
             {
@@ -113,7 +117,7 @@ namespace trabajaoPractico3
 
                     Label2.Text = "Borrado " + result.ToString() + " registro.";
                     completarTabla();
-                    TextBox2.Text = string.Empty;
+                    txtMonto.Text = string.Empty;
                     Table1.DataBind();
                 }
                 else
@@ -128,21 +132,46 @@ namespace trabajaoPractico3
 
         }
 
+        public DataTable devolverRegistroSeleccionado(int id)
+        {
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["cadena1"].ConnectionString);
+            con.Open();
+            SqlCommand cmd = new SqlCommand(@"select idCuenta, monto, tipo from RegistroContables
+where id = @id", con);
+            cmd.Parameters.AddWithValue("@id", id);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            con.Close();
+            return dt;
+           
+
+        }
+
         protected void DropDownList2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataView dv = (DataView)SqlDataSource4.Select(DataSourceSelectArguments.Empty);
-            if (dv != null && dv.Count > 0)
+
+            string id = ddRegistroContable.SelectedValue;
+            DataTable dt = new DataTable();
+            dt = devolverRegistroSeleccionado(Convert.ToInt32(id));
+            if (dt.Rows.Count > 0)
             {
-                DataRowView row = dv[0];
-                DropDownList1.SelectedValue = row["idCuenta"].ToString();
-                TextBox2.Text = row["tipo"].ToString();
+                var row = dt.Rows[0];
+                ddCuenta.SelectedValue = row["idCuenta"].ToString();
+                txtMonto.Text = row["monto"].ToString();
+                int tipo = 0;
+                if (Convert.ToBoolean(row["tipo"].ToString()) == true) tipo = 1;
+                else tipo = 0;
+
+                ddTipoCuenta.SelectedIndex = tipo;
             }
-            completarTabla();
+             completarTabla();
+           
         }
 
         protected void Button3_Click(object sender, EventArgs e)
         {
-            SqlDataSource2.UpdateParameters["id"].DefaultValue = DropDownList2.SelectedValue;
+            //SqlDataSource2.UpdateParameters["id"].DefaultValue = ddRegistroContable.SelectedValue.ToString();
             int result = SqlDataSource2.Update();
 
             if (result > 0)
@@ -150,7 +179,7 @@ namespace trabajaoPractico3
 
                 Label2.Text = "Actualizado " + result.ToString() + " registro.";
                 completarTabla();
-                TextBox2.Text = string.Empty;
+                txtMonto.Text = string.Empty;
             }
             else
             {
